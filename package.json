@@ -1,0 +1,48 @@
+{
+  "name": "etherscan-sdk",
+  "version": "1.0.0",
+  "description": "A comprehensive TypeScript SDK for Etherscan API that works in both Node.js and browser environments",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "prepare": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "keywords": [
+    "etherscan",
+    "ethereum",
+    "blockchain",
+    "api",
+    "sdk",
+    "web3"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/etherscan-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/etherscan-sdk/issues"
+  },
+  "homepage": "https://github.com/yourusername/etherscan-sdk#readme",
+  "devDependencies": {
+    "@types/node": "^22.13.14",
+    "rimraf": "^3.0.2",
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browser": {
+    "./dist/utils/fetch.js": "./dist/utils/fetch.browser.js"
+  }
+}
