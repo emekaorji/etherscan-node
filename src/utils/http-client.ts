@@ -25,6 +25,16 @@ export class HttpClient {
   private rateLimitTimer: NodeJS.Timeout | null = null;
 
   constructor(options: HttpClientOptions) {
+    // Validate baseUrl required
+    if (!options.baseUrl) {
+      throw new Error('baseUrl is required');
+    }
+
+    // Ensure baseUrl does not end with a slash
+    if (options.baseUrl.endsWith('/')) {
+      options.baseUrl = options.baseUrl.slice(0, -1);
+    }
+
     this.baseUrl = options.baseUrl;
     this.timeout = options.timeout || 30000;
     this.headers = options.headers || {};
@@ -57,9 +67,13 @@ export class HttpClient {
       )
       .join('&');
 
-    const url = `${this.baseUrl}${path}${
-      queryParams ? (path.includes('?') ? '&' : '?') + queryParams : ''
-    }`;
+    const formattedPath = path.startsWith('/') ? path.slice(1) : path;
+    const baseUrlWithPath = `${this.baseUrl}${formattedPath}`;
+    const formattedQueryParams = queryParams
+      ? (baseUrlWithPath.includes('?') ? '&' : '?') + queryParams
+      : '';
+
+    const url = `${baseUrlWithPath}${formattedQueryParams}`;
 
     return this.request<T>(url);
   }

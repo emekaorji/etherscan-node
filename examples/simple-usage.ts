@@ -1,7 +1,7 @@
 /**
  * Simple example of using the Etherscan SDK
  */
-import { EtherscanSDK } from '../src';
+import { EtherscanSDK, Network } from '../src';
 
 // Replace with your own Etherscan API key
 const API_KEY = 'YOUR_ETHERSCAN_API_KEY';
@@ -10,7 +10,7 @@ async function main() {
   // Initialize the SDK
   const etherscan = new EtherscanSDK({
     apiKey: API_KEY,
-    network: 'mainnet',
+    network: Network.ETH_MAINNET,
     timeout: 10000,
     rateLimitEnabled: true,
     maxRequestsPerSecond: 5,

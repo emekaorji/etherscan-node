@@ -8,6 +8,8 @@ import {
   EtherscanAPIError,
   EtherscanValidationError,
   EtherscanNetworkError,
+  Version,
+  NetworkString,
 } from './types';
 import { HttpClient } from './utils/http-client';
 import { AccountsModule } from './modules/accounts';
@@ -20,11 +22,14 @@ import { TokensModule } from './modules/tokens';
 import { GasModule } from './modules/gas';
 import { StatsModule } from './modules/stats';
 import {
-  API_URLS,
   DEFAULT_TIMEOUT,
   DEFAULT_MAX_REQUESTS_PER_SECOND,
   DEFAULT_NETWORK,
   ERROR_MESSAGES,
+  V1_API_URLS,
+  V2_API_URL,
+  V2_API_CHAIN_IDS,
+  SUPPORTED_CHAINS,
 } from './constants';
 
 /**
@@ -39,7 +44,12 @@ export class EtherscanSDK {
   /**
    * Network to use
    */
-  private readonly network: Network;
+  private readonly network: Network | NetworkString;
+
+  /**
+   * Version to use
+   */
+  private readonly version: Version;
 
   /**
    * HTTP client
@@ -79,13 +89,15 @@ export class EtherscanSDK {
     this.network = options.network || DEFAULT_NETWORK;
 
     // Validate network
-    if (!Object.keys(API_URLS).includes(this.network)) {
+    if (!SUPPORTED_CHAINS.includes(this.network)) {
       throw new EtherscanValidationError(ERROR_MESSAGES.INVALID_NETWORK);
     }
 
+    this.version = options.version || 'v2';
+
     // Initialize HTTP client
     this.httpClient = new HttpClient({
-      baseUrl: API_URLS[this.network],
+      baseUrl: this.resolveAPIURL(this.network),
       timeout: options.timeout || DEFAULT_TIMEOUT,
     });
 
@@ -109,10 +121,20 @@ export class EtherscanSDK {
     this.stats = new StatsModule(this.httpClient, this.apiKey);
   }
 
+  private resolveAPIURL(network: Network | NetworkString): string {
+    if (this.version === 'v1') {
+      return V1_API_URLS[network];
+    }
+
+    const chainId = V2_API_CHAIN_IDS[network];
+
+    return `${V2_API_URL}?chainid=${chainId}`;
+  }
+
   /**
    * Get the current network
    */
-  public getNetwork(): Network {
+  public getNetwork(): Network | NetworkString {
     return this.network;
   }
 
@@ -125,7 +147,7 @@ export class EtherscanSDK {
     }
 
     this.httpClient = new HttpClient({
-      baseUrl: API_URLS[this.network],
+      baseUrl: this.resolveAPIURL(this.network),
       timeout,
     });
   }
