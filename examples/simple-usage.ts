@@ -17,6 +17,7 @@ async function main() {
   });
 
   try {
+    // etherscan.contracts.getSourceCode()
     // Get ETH balance for a specific address
     const address = '0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae'; // Ethereum Foundation
     const balance = await etherscan.accounts.getBalance({ address });

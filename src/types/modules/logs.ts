@@ -4,9 +4,17 @@
 
 import { BlockRangeRequest } from '../index';
 
+export type TopicOperator = 'and' | 'or';
+
 export interface LogsRequest extends BlockRangeRequest {
   address: string;
   topics?: string[];
+  topic0_1_opr?: TopicOperator;
+  topic0_2_opr?: TopicOperator;
+  topic0_3_opr?: TopicOperator;
+  topic1_2_opr?: TopicOperator;
+  topic1_3_opr?: TopicOperator;
+  topic2_3_opr?: TopicOperator;
 }
 
 export interface Log {

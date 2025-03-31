@@ -26,10 +26,35 @@ export class ContractsModule extends BaseModule {
 
   /**
    * Get source code for a verified contract
+   * @param addressOrParams - Either a string address or a SourceCodeRequest object
+   * @example
+   * ```ts
+   * const sourceCode = await etherscan.contracts.getSourceCode('0x06012c8cf97BEaD5deAe237070F9587f8E7A266d');
+   * ```
+   */
+  public async getSourceCode(
+    address: string
+  ): Promise<Contracts.SourceCodeResponse[]>;
+  /**
+   * Get source code for a verified contract
+   * @param params - A SourceCodeRequest object
+   * @example
+   * ```ts
+   * const sourceCode = await etherscan.contracts.getSourceCode({ address: '0x06012c8cf97BEaD5deAe237070F9587f8E7A266d' });
+   * ```
    */
   public async getSourceCode(
     params: Contracts.SourceCodeRequest
+  ): Promise<Contracts.SourceCodeResponse[]>;
+  public async getSourceCode(
+    addressOrParams: string | Contracts.SourceCodeRequest
   ): Promise<Contracts.SourceCodeResponse[]> {
+    // Convert string address to params object if needed
+    const params: Contracts.SourceCodeRequest =
+      typeof addressOrParams === 'string'
+        ? { address: addressOrParams }
+        : addressOrParams;
+
     // Validate required parameters
     this.validateRequired(params, ['address']);
     this.validateAddress(params.address);

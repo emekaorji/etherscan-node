@@ -1,5 +1,9 @@
 /**
  * Blocks module for Etherscan API
+ * @class BlocksModule
+ * @description Provides methods for interacting with Ethereum blocks
+ * @extends BaseModule
+ * @see {@link https://docs.etherscan.io/api-endpoints/blocks Etherscan API Documentation}
  */
 import { BaseModule } from './base';
 import { Blocks, APIResponse } from '../types';
@@ -7,6 +11,19 @@ import { Blocks, APIResponse } from '../types';
 export class BlocksModule extends BaseModule {
   /**
    * Get block reward by block number
+   * @param {Blocks.BlockRewardRequest} params - Request parameters
+   * @returns {Promise<Blocks.BlockRewardResponse>} Block reward information including miner address and reward amount
+   * @throws {EtherscanValidationError} if block number is invalid
+   * @example
+   * ```ts
+   * const blockReward = await blocksModule.getBlockReward({
+   *   blockno: 123456
+   * });
+   * console.log(blockReward.blockNumber); // '123456'
+   * console.log(blockReward.timeStamp); // '1625097600'
+   * console.log(blockReward.blockMiner); // '0x123...'
+   * console.log(blockReward.blockReward); // '2000000000000000000'
+   * ```
    */
   public async getBlockReward(
     params: Blocks.BlockRewardRequest
@@ -27,6 +44,19 @@ export class BlocksModule extends BaseModule {
 
   /**
    * Get estimated block countdown for a specific block number
+   * @param {Blocks.BlockCountdownRequest} params - Request parameters
+   * @returns {Promise<Blocks.BlockCountdownResponse>} Block countdown information including current block, target block, and estimated time
+   * @throws {EtherscanValidationError} if block number is invalid
+   * @example
+   * ```ts
+   * const countdown = await blocksModule.getBlockCountdown({
+   *   blockno: 123456
+   * });
+   * console.log(countdown.CurrentBlock); // '123400'
+   * console.log(countdown.CountdownBlock); // '123456'
+   * console.log(countdown.RemainingBlock); // '56'
+   * console.log(countdown.EstimateTimeInSec); // '840'
+   * ```
    */
   public async getBlockCountdown(
     params: Blocks.BlockCountdownRequest
@@ -47,6 +77,21 @@ export class BlocksModule extends BaseModule {
 
   /**
    * Get block number by timestamp
+   * @param {number} timestamp - Unix timestamp in seconds
+   * @param {'before' | 'after'} [closest='before'] - Whether to return the block before or after the timestamp
+   * @returns {Promise<string>} The block number closest to the given timestamp
+   * @throws {EtherscanValidationError} if timestamp is invalid
+   * @throws {EtherscanValidationError} if closest parameter is invalid
+   * @example
+   * ```ts
+   * // Get block number before timestamp
+   * const blockBefore = await blocksModule.getBlockNumberByTimestamp(1625097600);
+   * console.log(blockBefore); // '123456'
+   *
+   * // Get block number after timestamp
+   * const blockAfter = await blocksModule.getBlockNumberByTimestamp(1625097600, 'after');
+   * console.log(blockAfter); // '123457'
+   * ```
    */
   public async getBlockNumberByTimestamp(
     timestamp: number,

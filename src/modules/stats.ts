@@ -1,12 +1,25 @@
 /**
  * Stats module for Etherscan API
+ * @class StatsModule
+ * @description Provides methods for retrieving Ethereum network statistics and metrics
+ * @extends BaseModule
+ * @see {@link https://docs.etherscan.io/api-endpoints/stats Etherscan API Documentation}
  */
 import { BaseModule } from './base';
 import { Stats, APIResponse } from '../types';
 
 export class StatsModule extends BaseModule {
   /**
-   * Get Ether price (in BTC and USD)
+   * Get the current Ether price in BTC and USD
+   * @returns {Promise<Stats.EthPriceResponse>} Current ETH price information
+   * @example
+   * ```ts
+   * const price = await statsModule.getEthPrice();
+   * console.log(price.ethbtc); // '0.0714'
+   * console.log(price.ethbtc_timestamp); // '1631234567'
+   * console.log(price.ethusd); // '2345.67'
+   * console.log(price.ethusd_timestamp); // '1631234567'
+   * ```
    */
   public async getEthPrice(): Promise<Stats.EthPriceResponse> {
     const apiParams = this.createParams('stats', 'ethprice', {});
@@ -18,7 +31,13 @@ export class StatsModule extends BaseModule {
   }
 
   /**
-   * Get total Ether supply
+   * Get the total Ether supply
+   * @returns {Promise<Stats.EthSupplyResponse>} Total ETH supply information
+   * @example
+   * ```ts
+   * const supply = await statsModule.getEthSupply();
+   * console.log(supply.ethsupply); // '120000000000000000000000000'
+   * ```
    */
   public async getEthSupply(): Promise<Stats.EthSupplyResponse> {
     const apiParams = this.createParams('stats', 'ethsupply2', {});
@@ -30,25 +49,71 @@ export class StatsModule extends BaseModule {
   }
 
   /**
-   * Get total nodes count
+   * Get the total number of Ethereum nodes
+   * @returns {Promise<number>} Total number of nodes
+   * @example
+   * ```ts
+   * const nodeCount = await statsModule.getNodeCount();
+   * console.log(nodeCount); // 12345
+   * ```
    */
-  public async getNodeCount(): Promise<any> {
+  public async getNodeCount(): Promise<number> {
     const apiParams = this.createParams('stats', 'nodecount', {});
 
-    const response = await this.httpClient.get<APIResponse<any>>('', apiParams);
+    const response = await this.httpClient.get<APIResponse<number>>(
+      '',
+      apiParams
+    );
     return response.result;
   }
 
   /**
-   * Get ethereum node size
+   * Get Ethereum node size information
+   * @param {Object} params - Node size request parameters
+   * @param {string} [params.startDate] - Start date in YYYY-MM-DD format
+   * @param {string} [params.endDate] - End date in YYYY-MM-DD format
+   * @param {string} [params.clientType='geth'] - Client type (geth, parity, etc.)
+   * @param {string} [params.syncMode='default'] - Sync mode
+   * @param {'asc'|'desc'} [params.sort='asc'] - Sort order
+   * @returns {Promise<Stats.EthNodeSizeResponse>} Node size information
+   * @throws {EtherscanValidationError} if date format is invalid
+   * @example
+   * ```ts
+   * const nodeSize = await statsModule.getNodeSize({
+   *   startDate: '2023-01-01',
+   *   endDate: '2023-12-31',
+   *   clientType: 'geth',
+   *   syncMode: 'default',
+   *   sort: 'asc'
+   * });
+   * console.log(nodeSize.chainSize); // '123456789'
+   * console.log(nodeSize.clientType); // 'geth'
+   * ```
    */
-  public async getNodeSize(): Promise<Stats.EthNodeSizeResponse> {
+  public async getNodeSize(
+    params: {
+      startDate?: string;
+      endDate?: string;
+      clientType?: string;
+      syncMode?: string;
+      sort?: 'asc' | 'desc';
+    } = {}
+  ): Promise<Stats.EthNodeSizeResponse> {
+    // Validate date format if provided
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (params.startDate && !dateRegex.test(params.startDate)) {
+      throw new Error('Start date must be in YYYY-MM-DD format');
+    }
+    if (params.endDate && !dateRegex.test(params.endDate)) {
+      throw new Error('End date must be in YYYY-MM-DD format');
+    }
+
     const apiParams = this.createParams('stats', 'chainsize', {
-      startdate: '',
-      enddate: '',
-      clienttype: 'geth',
-      syncmode: 'default',
-      sort: 'asc',
+      startdate: params.startDate || '',
+      enddate: params.endDate || '',
+      clienttype: params.clientType || 'geth',
+      syncmode: params.syncMode || 'default',
+      sort: params.sort || 'asc',
     });
 
     const response = await this.httpClient.get<
@@ -58,34 +123,71 @@ export class StatsModule extends BaseModule {
   }
 
   /**
-   * Get Ethereum daily network transaction fee
+   * Get Ethereum daily network transaction fee data
+   * @returns {Promise<Array<{UTCDate: string, transactionFee_ETH: string}>>} Daily transaction fee data
+   * @example
+   * ```ts
+   * const fees = await statsModule.getDailyNetworkFee();
+   * console.log(fees[0].UTCDate); // '2023-01-01'
+   * console.log(fees[0].transactionFee_ETH); // '123.456'
+   * ```
    */
-  public async getDailyNetworkFee(): Promise<any> {
+  public async getDailyNetworkFee(): Promise<
+    Array<{ UTCDate: string; transactionFee_ETH: string }>
+  > {
     const apiParams = this.createParams('stats', 'dailytxnfee', {});
 
-    const response = await this.httpClient.get<APIResponse<any>>('', apiParams);
+    const response = await this.httpClient.get<
+      APIResponse<Array<{ UTCDate: string; transactionFee_ETH: string }>>
+    >('', apiParams);
     return response.result;
   }
 
   /**
    * Get Ethereum daily new address count
+   * @returns {Promise<Array<{UTCDate: string, newAddressCount: number}>>} Daily new address count data
+   * @example
+   * ```ts
+   * const newAddresses = await statsModule.getDailyNewAddressCount();
+   * console.log(newAddresses[0].UTCDate); // '2023-01-01'
+   * console.log(newAddresses[0].newAddressCount); // 12345
+   * ```
    */
-  public async getDailyNewAddressCount(): Promise<any> {
+  public async getDailyNewAddressCount(): Promise<
+    Array<{ UTCDate: string; newAddressCount: number }>
+  > {
     const apiParams = this.createParams('stats', 'dailynewaddress', {});
 
-    const response = await this.httpClient.get<APIResponse<any>>('', apiParams);
+    const response = await this.httpClient.get<
+      APIResponse<Array<{ UTCDate: string; newAddressCount: number }>>
+    >('', apiParams);
     return response.result;
   }
 
   /**
    * Get Ethereum transaction history by days
+   * @param {string} startDate - Start date in YYYY-MM-DD format
+   * @param {string} endDate - End date in YYYY-MM-DD format
+   * @param {'asc'|'desc'} [sort='asc'] - Sort order
+   * @returns {Promise<Array<{UTCDate: string, transactionCount: number}>>} Daily transaction count data
+   * @throws {EtherscanValidationError} if date format is invalid
+   * @example
+   * ```ts
+   * const txHistory = await statsModule.getDailyTransactionCount(
+   *   '2023-01-01',
+   *   '2023-12-31',
+   *   'asc'
+   * );
+   * console.log(txHistory[0].UTCDate); // '2023-01-01'
+   * console.log(txHistory[0].transactionCount); // 123456
+   * ```
    */
   public async getDailyTransactionCount(
     startDate: string,
     endDate: string,
     sort: 'asc' | 'desc' = 'asc'
-  ): Promise<any[]> {
-    // Validate date format (YYYY-MM-DD)
+  ): Promise<Array<{ UTCDate: string; transactionCount: number }>> {
+    // Validate date format
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
       throw new Error('Dates must be in YYYY-MM-DD format');
@@ -97,22 +199,36 @@ export class StatsModule extends BaseModule {
       sort,
     });
 
-    const response = await this.httpClient.get<APIResponse<any[]>>(
-      '',
-      apiParams
-    );
+    const response = await this.httpClient.get<
+      APIResponse<Array<{ UTCDate: string; transactionCount: number }>>
+    >('', apiParams);
     return response.result;
   }
 
   /**
    * Get Ethereum block size history by days
+   * @param {string} startDate - Start date in YYYY-MM-DD format
+   * @param {string} endDate - End date in YYYY-MM-DD format
+   * @param {'asc'|'desc'} [sort='asc'] - Sort order
+   * @returns {Promise<Array<{UTCDate: string, avgBlockSize: number}>>} Daily average block size data
+   * @throws {EtherscanValidationError} if date format is invalid
+   * @example
+   * ```ts
+   * const blockSizes = await statsModule.getDailyBlockSize(
+   *   '2023-01-01',
+   *   '2023-12-31',
+   *   'asc'
+   * );
+   * console.log(blockSizes[0].UTCDate); // '2023-01-01'
+   * console.log(blockSizes[0].avgBlockSize); // 12345
+   * ```
    */
   public async getDailyBlockSize(
     startDate: string,
     endDate: string,
     sort: 'asc' | 'desc' = 'asc'
-  ): Promise<any[]> {
-    // Validate date format (YYYY-MM-DD)
+  ): Promise<Array<{ UTCDate: string; avgBlockSize: number }>> {
+    // Validate date format
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
       throw new Error('Dates must be in YYYY-MM-DD format');
@@ -124,22 +240,36 @@ export class StatsModule extends BaseModule {
       sort,
     });
 
-    const response = await this.httpClient.get<APIResponse<any[]>>(
-      '',
-      apiParams
-    );
+    const response = await this.httpClient.get<
+      APIResponse<Array<{ UTCDate: string; avgBlockSize: number }>>
+    >('', apiParams);
     return response.result;
   }
 
   /**
    * Get Ethereum average block time history by days
+   * @param {string} startDate - Start date in YYYY-MM-DD format
+   * @param {string} endDate - End date in YYYY-MM-DD format
+   * @param {'asc'|'desc'} [sort='asc'] - Sort order
+   * @returns {Promise<Array<{UTCDate: string, avgBlockTime: number}>>} Daily average block time data
+   * @throws {EtherscanValidationError} if date format is invalid
+   * @example
+   * ```ts
+   * const blockTimes = await statsModule.getDailyAverageBlockTime(
+   *   '2023-01-01',
+   *   '2023-12-31',
+   *   'asc'
+   * );
+   * console.log(blockTimes[0].UTCDate); // '2023-01-01'
+   * console.log(blockTimes[0].avgBlockTime); // 12.34
+   * ```
    */
   public async getDailyAverageBlockTime(
     startDate: string,
     endDate: string,
     sort: 'asc' | 'desc' = 'asc'
-  ): Promise<any[]> {
-    // Validate date format (YYYY-MM-DD)
+  ): Promise<Array<{ UTCDate: string; avgBlockTime: number }>> {
+    // Validate date format
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
       throw new Error('Dates must be in YYYY-MM-DD format');
@@ -151,22 +281,36 @@ export class StatsModule extends BaseModule {
       sort,
     });
 
-    const response = await this.httpClient.get<APIResponse<any[]>>(
-      '',
-      apiParams
-    );
+    const response = await this.httpClient.get<
+      APIResponse<Array<{ UTCDate: string; avgBlockTime: number }>>
+    >('', apiParams);
     return response.result;
   }
 
   /**
    * Get Ethereum daily uncle block count
+   * @param {string} startDate - Start date in YYYY-MM-DD format
+   * @param {string} endDate - End date in YYYY-MM-DD format
+   * @param {'asc'|'desc'} [sort='asc'] - Sort order
+   * @returns {Promise<Array<{UTCDate: string, uncleCount: number}>>} Daily uncle block count data
+   * @throws {EtherscanValidationError} if date format is invalid
+   * @example
+   * ```ts
+   * const uncleCounts = await statsModule.getDailyUncleBlockCount(
+   *   '2023-01-01',
+   *   '2023-12-31',
+   *   'asc'
+   * );
+   * console.log(uncleCounts[0].UTCDate); // '2023-01-01'
+   * console.log(uncleCounts[0].uncleCount); // 123
+   * ```
    */
   public async getDailyUncleBlockCount(
     startDate: string,
     endDate: string,
     sort: 'asc' | 'desc' = 'asc'
-  ): Promise<any[]> {
-    // Validate date format (YYYY-MM-DD)
+  ): Promise<Array<{ UTCDate: string; uncleCount: number }>> {
+    // Validate date format
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
       throw new Error('Dates must be in YYYY-MM-DD format');
@@ -178,10 +322,9 @@ export class StatsModule extends BaseModule {
       sort,
     });
 
-    const response = await this.httpClient.get<APIResponse<any[]>>(
-      '',
-      apiParams
-    );
+    const response = await this.httpClient.get<
+      APIResponse<Array<{ UTCDate: string; uncleCount: number }>>
+    >('', apiParams);
     return response.result;
   }
 }

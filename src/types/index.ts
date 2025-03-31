@@ -22,6 +22,14 @@ export namespace Accounts {
   export type InternalTransactionsResponse =
     AccountsModule.InternalTransactionsResponse;
   export type InternalTransaction = AccountsModule.InternalTransaction;
+
+  export type TokenTransferResponse = AccountsModule.TokenTransferResponse;
+
+  export type NFTTransferResponse = AccountsModule.NFTTransferResponse;
+
+  export type ERC1155TransferResponse = AccountsModule.ERC1155TransferResponse;
+
+  export type MinedBlockResponse = AccountsModule.MinedBlockResponse;
 }
 
 export namespace Contracts {
@@ -52,11 +60,15 @@ export namespace Logs {
 }
 
 export namespace Proxy {
-  export type BlockNumberResponse = ProxyModule.BlockNumberResponse;
-  export type BlockByNumberRequest = ProxyModule.BlockByNumberRequest;
-  export type BlockByNumberResponse = ProxyModule.BlockByNumberResponse;
-  export type TransactionByHashRequest = ProxyModule.TransactionByHashRequest;
-  export type TransactionByHashResponse = ProxyModule.TransactionByHashResponse;
+  export type BlockResponse = ProxyModule.BlockResponse;
+  export type TransactionResponse = ProxyModule.TransactionResponse;
+  export type TransactionReceiptResponse =
+    ProxyModule.TransactionReceiptResponse;
+  export type LogResponse = ProxyModule.LogResponse;
+  export type SyncingStatusResponse = ProxyModule.SyncingStatusResponse;
+  export type WorkResponse = ProxyModule.WorkResponse;
+  export type CallRequest = ProxyModule.CallRequest;
+  export type LogRequest = ProxyModule.LogRequest;
 }
 
 export namespace Tokens {
@@ -64,6 +76,9 @@ export namespace Tokens {
   export type TokenBalanceResponse = TokensModule.TokenBalanceResponse;
   export type TokenSupplyRequest = TokensModule.TokenSupplyRequest;
   export type TokenSupplyResponse = TokensModule.TokenSupplyResponse;
+
+  export type TokenHolderResponse = TokensModule.TokenHolderResponse;
+  export type TokenInfoResponse = TokensModule.TokenInfoResponse;
 }
 
 export namespace Gas {

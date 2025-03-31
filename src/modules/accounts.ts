@@ -1,5 +1,9 @@
 /**
  * Accounts module for Etherscan API
+ * @class AccountsModule
+ * @description Provides methods for retrieving account information, balances, and transaction history
+ * @extends BaseModule
+ * @see {@link https://docs.etherscan.io/api-endpoints/accounts Etherscan API Documentation}
  */
 import { BaseModule } from './base';
 import { Accounts, APIResponse } from '../types';
@@ -7,6 +11,19 @@ import { Accounts, APIResponse } from '../types';
 export class AccountsModule extends BaseModule {
   /**
    * Get Ether balance for a single address
+   * @param {Object} params - Balance request parameters
+   * @param {string} params.address - Ethereum address to check balance for
+   * @param {string} [params.tag='latest'] - Block tag (latest, earliest, pending, or block number)
+   * @returns {Promise<string>} Account balance in Wei
+   * @throws {EtherscanValidationError} if address is invalid
+   * @example
+   * ```ts
+   * const balance = await accountsModule.getBalance({
+   *   address: '0x123...abc',
+   *   tag: 'latest'
+   * });
+   * console.log(balance); // '1000000000000000000' (1 ETH)
+   * ```
    */
   public async getBalance(params: Accounts.BalanceRequest): Promise<string> {
     // Validate required parameters
@@ -27,6 +44,20 @@ export class AccountsModule extends BaseModule {
 
   /**
    * Get Ether balance for multiple addresses in a single call
+   * @param {Object} params - Balance multi request parameters
+   * @param {string[]} params.addresses - Array of Ethereum addresses to check balances for
+   * @param {string} [params.tag='latest'] - Block tag (latest, earliest, pending, or block number)
+   * @returns {Promise<Array<Accounts.BalanceResponse>>} Array of account balances in Wei
+   * @throws {EtherscanValidationError} if addresses array is empty or contains invalid addresses
+   * @example
+   * ```ts
+   * const balances = await accountsModule.getBalanceMulti({
+   *   addresses: ['0x123...abc', '0x456...def'],
+   *   tag: 'latest'
+   * });
+   * console.log(balances[0].account); // '0x123...abc'
+   * console.log(balances[0].balance); // '1000000000000000000'
+   * ```
    */
   public async getBalanceMulti(
     params: Accounts.BalanceMultiRequest
@@ -54,6 +85,28 @@ export class AccountsModule extends BaseModule {
 
   /**
    * Get a list of 'normal' transactions by address
+   * @param {Object} params - Transactions request parameters
+   * @param {string} params.address - Ethereum address to get transactions for
+   * @param {number} [params.startBlock] - Starting block number
+   * @param {number} [params.endBlock] - Ending block number
+   * @param {number} [params.page=1] - Page number for pagination
+   * @param {number} [params.offset=10] - Number of records per page
+   * @param {'asc'|'desc'} [params.sort='desc'] - Sort order
+   * @returns {Promise<Accounts.TransactionsResponse>} List of transactions
+   * @throws {EtherscanValidationError} if address or block numbers are invalid
+   * @example
+   * ```ts
+   * const transactions = await accountsModule.getTransactions({
+   *   address: '0x123...abc',
+   *   startBlock: 1000000,
+   *   endBlock: 1000100,
+   *   page: 1,
+   *   offset: 10,
+   *   sort: 'desc'
+   * });
+   * console.log(transactions[0].hash); // '0x789...xyz'
+   * console.log(transactions[0].value); // '1000000000000000000'
+   * ```
    */
   public async getTransactions(
     params: Accounts.TransactionsRequest
@@ -88,6 +141,28 @@ export class AccountsModule extends BaseModule {
 
   /**
    * Get a list of 'internal' transactions by address
+   * @param {Object} params - Internal transactions request parameters
+   * @param {string} params.address - Ethereum address to get internal transactions for
+   * @param {number} [params.startBlock] - Starting block number
+   * @param {number} [params.endBlock] - Ending block number
+   * @param {number} [params.page=1] - Page number for pagination
+   * @param {number} [params.offset=10] - Number of records per page
+   * @param {'asc'|'desc'} [params.sort='desc'] - Sort order
+   * @returns {Promise<Accounts.InternalTransactionsResponse>} List of internal transactions
+   * @throws {EtherscanValidationError} if address or block numbers are invalid
+   * @example
+   * ```ts
+   * const internalTxs = await accountsModule.getInternalTransactions({
+   *   address: '0x123...abc',
+   *   startBlock: 1000000,
+   *   endBlock: 1000100,
+   *   page: 1,
+   *   offset: 10,
+   *   sort: 'desc'
+   * });
+   * console.log(internalTxs[0].hash); // '0x789...xyz'
+   * console.log(internalTxs[0].value); // '1000000000000000000'
+   * ```
    */
   public async getInternalTransactions(
     params: Accounts.InternalTransactionsRequest
@@ -122,6 +197,17 @@ export class AccountsModule extends BaseModule {
 
   /**
    * Get a list of 'internal' transactions by transaction hash
+   * @param {string} txhash - Transaction hash to get internal transactions for
+   * @returns {Promise<Accounts.InternalTransactionsResponse>} List of internal transactions
+   * @throws {EtherscanValidationError} if transaction hash is invalid
+   * @example
+   * ```ts
+   * const internalTxs = await accountsModule.getInternalTransactionsByHash(
+   *   '0x789...xyz'
+   * );
+   * console.log(internalTxs[0].hash); // '0x789...xyz'
+   * console.log(internalTxs[0].value); // '1000000000000000000'
+   * ```
    */
   public async getInternalTransactionsByHash(
     txhash: string
@@ -141,6 +227,25 @@ export class AccountsModule extends BaseModule {
 
   /**
    * Get a list of 'internal' transactions by block range
+   * @param {number} startBlock - Starting block number
+   * @param {number} endBlock - Ending block number
+   * @param {number} [page=1] - Page number for pagination
+   * @param {number} [offset=10] - Number of records per page
+   * @param {'asc'|'desc'} [sort='asc'] - Sort order
+   * @returns {Promise<Accounts.InternalTransactionsResponse>} List of internal transactions
+   * @throws {EtherscanValidationError} if block numbers are invalid or start block is greater than end block
+   * @example
+   * ```ts
+   * const internalTxs = await accountsModule.getInternalTransactionsByBlockRange(
+   *   1000000,
+   *   1000100,
+   *   1,
+   *   10,
+   *   'asc'
+   * );
+   * console.log(internalTxs[0].hash); // '0x789...xyz'
+   * console.log(internalTxs[0].value); // '1000000000000000000'
+   * ```
    */
   public async getInternalTransactionsByBlockRange(
     startBlock: number,
@@ -173,10 +278,34 @@ export class AccountsModule extends BaseModule {
 
   /**
    * Get a list of ERC-20 token transfer events by address
+   * @param {Object} params - Token transfers request parameters
+   * @param {string} params.address - Ethereum address to get token transfers for
+   * @param {string} [params.contractAddress] - Optional ERC20 token contract address to filter by
+   * @param {number} [params.startBlock] - Starting block number
+   * @param {number} [params.endBlock] - Ending block number
+   * @param {number} [params.page=1] - Page number for pagination
+   * @param {number} [params.offset=10] - Number of records per page
+   * @param {'asc'|'desc'} [params.sort='desc'] - Sort order
+   * @returns {Promise<Array<Accounts.TokenTransfer>>} List of token transfers
+   * @throws {EtherscanValidationError} if address, contract address, or block numbers are invalid
+   * @example
+   * ```ts
+   * const transfers = await accountsModule.getTokenTransfers({
+   *   address: '0x123...abc',
+   *   contractAddress: '0x456...def', // Optional: filter by specific token
+   *   startBlock: 1000000,
+   *   endBlock: 1000100,
+   *   page: 1,
+   *   offset: 10,
+   *   sort: 'desc'
+   * });
+   * console.log(transfers[0].hash); // '0x789...xyz'
+   * console.log(transfers[0].value); // '1000000000000000000'
+   * ```
    */
   public async getTokenTransfers(
     params: Accounts.TransactionsRequest & { contractAddress?: string }
-  ): Promise<any[]> {
+  ): Promise<Array<Accounts.TokenTransferResponse>> {
     // Validate required parameters
     this.validateRequired(params, ['address']);
     this.validateAddress(params.address);
@@ -205,19 +334,42 @@ export class AccountsModule extends BaseModule {
       sort: params.sort,
     });
 
-    const response = await this.httpClient.get<APIResponse<any[]>>(
-      '',
-      apiParams
-    );
+    const response = await this.httpClient.get<
+      APIResponse<Array<Accounts.TokenTransferResponse>>
+    >('', apiParams);
     return response.result;
   }
 
   /**
    * Get a list of ERC-721 NFT token transfer events by address
+   * @param {Object} params - NFT transfers request parameters
+   * @param {string} params.address - Ethereum address to get NFT transfers for
+   * @param {string} [params.contractAddress] - Optional ERC721 token contract address to filter by
+   * @param {number} [params.startBlock] - Starting block number
+   * @param {number} [params.endBlock] - Ending block number
+   * @param {number} [params.page=1] - Page number for pagination
+   * @param {number} [params.offset=10] - Number of records per page
+   * @param {'asc'|'desc'} [params.sort='desc'] - Sort order
+   * @returns {Promise<Array<Accounts.NFTTransfer>>} List of NFT transfers
+   * @throws {EtherscanValidationError} if address, contract address, or block numbers are invalid
+   * @example
+   * ```ts
+   * const nftTransfers = await accountsModule.getNFTTransfers({
+   *   address: '0x123...abc',
+   *   contractAddress: '0x456...def', // Optional: filter by specific NFT contract
+   *   startBlock: 1000000,
+   *   endBlock: 1000100,
+   *   page: 1,
+   *   offset: 10,
+   *   sort: 'desc'
+   * });
+   * console.log(nftTransfers[0].hash); // '0x789...xyz'
+   * console.log(nftTransfers[0].tokenID); // '123'
+   * ```
    */
   public async getNFTTransfers(
     params: Accounts.TransactionsRequest & { contractAddress?: string }
-  ): Promise<any[]> {
+  ): Promise<Array<Accounts.NFTTransferResponse>> {
     // Validate required parameters
     this.validateRequired(params, ['address']);
     this.validateAddress(params.address);
@@ -246,19 +398,43 @@ export class AccountsModule extends BaseModule {
       sort: params.sort,
     });
 
-    const response = await this.httpClient.get<APIResponse<any[]>>(
-      '',
-      apiParams
-    );
+    const response = await this.httpClient.get<
+      APIResponse<Array<Accounts.NFTTransferResponse>>
+    >('', apiParams);
     return response.result;
   }
 
   /**
    * Get a list of ERC-1155 token transfer events by address
+   * @param {Object} params - ERC1155 transfers request parameters
+   * @param {string} params.address - Ethereum address to get ERC1155 transfers for
+   * @param {string} [params.contractAddress] - Optional ERC1155 token contract address to filter by
+   * @param {number} [params.startBlock] - Starting block number
+   * @param {number} [params.endBlock] - Ending block number
+   * @param {number} [params.page=1] - Page number for pagination
+   * @param {number} [params.offset=10] - Number of records per page
+   * @param {'asc'|'desc'} [params.sort='desc'] - Sort order
+   * @returns {Promise<Array<Accounts.ERC1155Transfer>>} List of ERC1155 transfers
+   * @throws {EtherscanValidationError} if address, contract address, or block numbers are invalid
+   * @example
+   * ```ts
+   * const transfers = await accountsModule.getERC1155Transfers({
+   *   address: '0x123...abc',
+   *   contractAddress: '0x456...def', // Optional: filter by specific ERC1155 contract
+   *   startBlock: 1000000,
+   *   endBlock: 1000100,
+   *   page: 1,
+   *   offset: 10,
+   *   sort: 'desc'
+   * });
+   * console.log(transfers[0].hash); // '0x789...xyz'
+   * console.log(transfers[0].tokenID); // '123'
+   * console.log(transfers[0].value); // '100'
+   * ```
    */
   public async getERC1155Transfers(
     params: Accounts.TransactionsRequest & { contractAddress?: string }
-  ): Promise<any[]> {
+  ): Promise<Array<Accounts.ERC1155TransferResponse>> {
     // Validate required parameters
     this.validateRequired(params, ['address']);
     this.validateAddress(params.address);
@@ -287,21 +463,36 @@ export class AccountsModule extends BaseModule {
       sort: params.sort,
     });
 
-    const response = await this.httpClient.get<APIResponse<any[]>>(
-      '',
-      apiParams
-    );
+    const response = await this.httpClient.get<
+      APIResponse<Array<Accounts.ERC1155TransferResponse>>
+    >('', apiParams);
     return response.result;
   }
 
   /**
    * Get list of blocks mined by address
+   * @param {string} address - Ethereum address to get mined blocks for
+   * @param {number} [page=1] - Page number for pagination
+   * @param {number} [offset=10] - Number of records per page
+   * @returns {Promise<Array<Accounts.MinedBlock>>} List of mined blocks
+   * @throws {EtherscanValidationError} if address is invalid
+   * @example
+   * ```ts
+   * const minedBlocks = await accountsModule.getMinedBlocks(
+   *   '0x123...abc',
+   *   1,
+   *   10
+   * );
+   * console.log(minedBlocks[0].blockNumber); // '1000000'
+   * console.log(minedBlocks[0].timeStamp); // '1631234567'
+   * console.log(minedBlocks[0].blockReward); // '2000000000000000000'
+   * ```
    */
   public async getMinedBlocks(
     address: string,
     page: number = 1,
     offset: number = 10
-  ): Promise<any[]> {
+  ): Promise<Array<Accounts.MinedBlockResponse>> {
     // Validate address
     this.validateAddress(address);
 
@@ -311,10 +502,9 @@ export class AccountsModule extends BaseModule {
       offset,
     });
 
-    const response = await this.httpClient.get<APIResponse<any[]>>(
-      '',
-      apiParams
-    );
+    const response = await this.httpClient.get<
+      APIResponse<Array<Accounts.MinedBlockResponse>>
+    >('', apiParams);
     return response.result;
   }
 }
