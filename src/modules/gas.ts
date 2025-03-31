@@ -1,13 +1,23 @@
 /**
- * Gas module for Etherscan API
+ * Gas module for the Etherscan API
+ * @module GasModule
+ */
+
+import { BaseModule } from './base';
+import { Gas, APIResponse } from '../types';
+
+/**
+ * Gas module for the Etherscan API
  * @class GasModule
  * @description Provides methods for interacting with Ethereum gas prices and estimations
  * @extends BaseModule
  * @see {@link https://docs.etherscan.io/api-endpoints/gas-tracker Etherscan API Documentation}
+ * @example
+ * ```ts
+ * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
+ * const gas = sdk.gas;
+ * ```
  */
-import { BaseModule } from './base';
-import { Gas, APIResponse } from '../types';
-
 export class GasModule extends BaseModule {
   /**
    * Get current Safe, Proposed and Fast gas prices

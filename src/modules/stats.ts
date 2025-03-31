@@ -1,13 +1,23 @@
 /**
- * Stats module for Etherscan API
+ * Stats module for the Etherscan API
+ * @module StatsModule
+ */
+
+import { BaseModule } from './base';
+import { Stats, APIResponse } from '../types';
+
+/**
+ * Stats module for the Etherscan API
  * @class StatsModule
  * @description Provides methods for retrieving Ethereum network statistics and metrics
  * @extends BaseModule
  * @see {@link https://docs.etherscan.io/api-endpoints/stats Etherscan API Documentation}
+ * @example
+ * ```ts
+ * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
+ * const stats = sdk.stats;
+ * ```
  */
-import { BaseModule } from './base';
-import { Stats, APIResponse } from '../types';
-
 export class StatsModule extends BaseModule {
   /**
    * Get the current Ether price in BTC and USD

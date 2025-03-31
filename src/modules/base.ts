@@ -1,9 +1,16 @@
 /**
  * Base module class for all API modules
+ * @module BaseModule
  */
+
 import { HttpClient } from '../utils/http-client';
 import { EtherscanValidationError } from '../types';
 
+/**
+ * Base module class for all API modules
+ * @class BaseModule
+ * @description Provides methods for creating query parameters, validating required parameters, and validating address format
+ */
 export abstract class BaseModule {
   protected readonly httpClient: HttpClient;
   protected readonly apiKey: string;

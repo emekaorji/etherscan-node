@@ -1,13 +1,23 @@
 /**
- * Accounts module for Etherscan API
+ * Accounts module for the Etherscan API
+ * @module AccountsModule
+ */
+
+import { BaseModule } from './base';
+import { Accounts, APIResponse } from '../types';
+
+/**
+ * Accounts module for the Etherscan API
  * @class AccountsModule
  * @description Provides methods for retrieving account information, balances, and transaction history
  * @extends BaseModule
  * @see {@link https://docs.etherscan.io/api-endpoints/accounts Etherscan API Documentation}
+ * @example
+ * ```ts
+ * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
+ * const accounts = sdk.accounts;
+ * ```
  */
-import { BaseModule } from './base';
-import { Accounts, APIResponse } from '../types';
-
 export class AccountsModule extends BaseModule {
   /**
    * Get Ether balance for a single address

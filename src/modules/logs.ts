@@ -1,13 +1,23 @@
 /**
- * Logs module for Etherscan API
+ * Logs module for the Etherscan API
+ * @module LogsModule
+ */
+
+import { BaseModule } from './base';
+import { Logs, APIResponse } from '../types';
+
+/**
+ * Logs module for the Etherscan API
  * @class LogsModule
  * @description Provides methods for retrieving and filtering Ethereum event logs
  * @extends BaseModule
  * @see {@link https://docs.etherscan.io/api-endpoints/logs Etherscan API Documentation}
+ * @example
+ * ```ts
+ * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
+ * const logs = sdk.logs;
+ * ```
  */
-import { BaseModule } from './base';
-import { Logs, APIResponse } from '../types';
-
 export class LogsModule extends BaseModule {
   /**
    * Get event logs for an address and/or topics

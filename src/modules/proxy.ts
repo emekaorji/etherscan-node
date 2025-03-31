@@ -1,13 +1,23 @@
 /**
- * Proxy module for Etherscan API
+ * Proxy module for the Etherscan API
+ * @module ProxyModule
+ */
+
+import { BaseModule } from './base';
+import { Proxy, APIResponse } from '../types';
+
+/**
+ * Proxy module for the Etherscan API
  * @class ProxyModule
  * @description Provides methods for interacting with Ethereum network through JSON-RPC proxy
  * @extends BaseModule
  * @see {@link https://docs.etherscan.io/api-endpoints/proxy Etherscan API Documentation}
+ * @example
+ * ```ts
+ * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
+ * const proxy = sdk.proxy;
+ * ```
  */
-import { BaseModule } from './base';
-import { Proxy, APIResponse } from '../types';
-
 export class ProxyModule extends BaseModule {
   /**
    * Validates a block hash

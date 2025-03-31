@@ -1,13 +1,23 @@
 /**
- * Tokens module for Etherscan API
+ * Tokens module for the Etherscan API
+ * @module TokensModule
+ */
+
+import { BaseModule } from './base';
+import { Tokens, APIResponse } from '../types';
+
+/**
+ * Tokens module for the Etherscan API
  * @class TokensModule
  * @description Provides methods for retrieving ERC20 token information, balances, and holder data
  * @extends BaseModule
  * @see {@link https://docs.etherscan.io/api-endpoints/tokens Etherscan API Documentation}
+ * @example
+ * ```ts
+ * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
+ * const tokens = sdk.tokens;
+ * ```
  */
-import { BaseModule } from './base';
-import { Tokens, APIResponse } from '../types';
-
 export class TokensModule extends BaseModule {
   /**
    * Get ERC20 token account balance for token contract address

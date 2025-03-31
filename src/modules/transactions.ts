@@ -1,13 +1,23 @@
 /**
- * Transactions module for Etherscan API
+ * Transactions module for the Etherscan API
+ * @module TransactionsModule
+ */
+
+import { BaseModule } from './base';
+import { Transactions, APIResponse } from '../types';
+
+/**
+ * Transactions module for the Etherscan API
  * @class TransactionsModule
  * @description Provides methods for retrieving and checking transaction information and status
  * @extends BaseModule
  * @see {@link https://docs.etherscan.io/api-endpoints/transactions Etherscan API Documentation}
+ * @example
+ * ```ts
+ * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
+ * const transactions = sdk.transactions;
+ * ```
  */
-import { BaseModule } from './base';
-import { Transactions, APIResponse } from '../types';
-
 export class TransactionsModule extends BaseModule {
   /**
    * Check transaction execution status

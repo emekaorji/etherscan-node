@@ -1,13 +1,23 @@
 /**
- * Blocks module for Etherscan API
+ * Blocks module for the Etherscan API
+ * @module BlocksModule
+ */
+
+import { BaseModule } from './base';
+import { Blocks, APIResponse } from '../types';
+
+/**
+ * Blocks module for the Etherscan API
  * @class BlocksModule
  * @description Provides methods for interacting with Ethereum blocks
  * @extends BaseModule
  * @see {@link https://docs.etherscan.io/api-endpoints/blocks Etherscan API Documentation}
+ * @example
+ * ```ts
+ * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
+ * const blocks = sdk.blocks;
+ * ```
  */
-import { BaseModule } from './base';
-import { Blocks, APIResponse } from '../types';
-
 export class BlocksModule extends BaseModule {
   /**
    * Get block reward by block number

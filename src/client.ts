@@ -1,6 +1,7 @@
 /**
  * Etherscan SDK
  * A Cross-Platform TypeScript SDK for the Etherscan API (Works in Node.js and in the Browser)
+ * @module EtherscanSDK
  */
 
 import {
@@ -34,132 +35,255 @@ import {
 } from './constants';
 
 /**
- * Main Etherscan SDK class
+ * Main Etherscan SDK class that provides access to all Etherscan API endpoints
+ * @class EtherscanSDK
+ * @description A comprehensive SDK for interacting with the Etherscan API, providing methods for accessing blockchain data, transactions, accounts, and more.
+ * @example
+ * ```ts
+ * const sdk = new EtherscanSDK({
+ *   apiKey: 'your_api_key',
+ *   network: 'mainnet',
+ *   version: 'v2',
+ *   timeout: 5000,
+ *   rateLimitEnabled: true,
+ *   maxRequestsPerSecond: 5
+ * });
+ *
+ * // Get account balance
+ * const balance = await sdk.accounts.getBalance({
+ *   address: '0x123...abc'
+ * });
+ * ```
  */
 export class EtherscanSDK {
   /** API key for Etherscan */
   private readonly apiKey: string;
-  /** Network to use */
+  /** Network to use (e.g., 'mainnet', 'testnet', etc.) */
   private readonly network: Network | NetworkString;
-  /** Version to use */
+  /** API version to use ('v1' or 'v2') */
   private readonly version: Version;
-  /** HTTP client */
+  /** HTTP client for making API requests */
   private httpClient: HttpClient;
 
   /**
-   * Account module instance
+   * Account module instance for accessing account-related endpoints
    * @readonly
    * @example
+   * ```ts
    * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
-   * sdk.accounts.getBalance('0x1234567890123456789012345678901234567890');
+   * // Get account balance
+   * const balance = await sdk.accounts.getBalance({
+   *   address: '0x123...abc'
+   * });
+   * // Get transaction history
+   * const transactions = await sdk.accounts.getTransactions({
+   *   address: '0x123...abc'
+   * });
+   * ```
    */
   public readonly accounts: AccountsModule;
+
   /**
-   * Contracts module instance
+   * Contracts module instance for accessing contract-related endpoints
    * @readonly
    * @example
+   * ```ts
    * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
-   * sdk.contracts.getABI('0x1234567890123456789012345678901234567890');
+   * // Get contract ABI
+   * const abi = await sdk.contracts.getABI({
+   *   address: '0x123...abc'
+   * });
+   * // Get contract source code
+   * const sourceCode = await sdk.contracts.getSourceCode({
+   *   address: '0x123...abc'
+   * });
+   * ```
    */
   public readonly contracts: ContractsModule;
+
   /**
-   * Transactions module instance
+   * Transactions module instance for accessing transaction-related endpoints
    * @readonly
    * @example
+   * ```ts
    * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
-   * sdk.transactions.getTransaction('0x1234567890123456789012345678901234567890');
+   * // Get transaction status
+   * const status = await sdk.transactions.getStatus({
+   *   txhash: '0x123...abc'
+   * });
+   * // Get transaction receipt status
+   * const receiptStatus = await sdk.transactions.getReceiptStatus({
+   *   txhash: '0x123...abc'
+   * });
+   * ```
    */
   public readonly transactions: TransactionsModule;
+
   /**
-   * Blocks module instance
+   * Blocks module instance for accessing block-related endpoints
    * @readonly
    * @example
+   * ```ts
    * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
-   * sdk.blocks.getBlock('0x1234567890123456789012345678901234567890');
+   * // Get block reward
+   * const reward = await sdk.blocks.getBlockReward({
+   *   blockno: 1000000
+   * });
+   * // Get block countdown
+   * const countdown = await sdk.blocks.getBlockCountdown({
+   *   blockno: 1000000
+   * });
+   * ```
    */
   public readonly blocks: BlocksModule;
+
   /**
-   * Logs module instance
+   * Logs module instance for accessing log-related endpoints
    * @readonly
    * @example
+   * ```ts
    * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
-   * sdk.logs.getLogs('0x1234567890123456789012345678901234567890');
+   * // Get logs
+   * const logs = await sdk.logs.getLogs({
+   *   address: '0x123...abc',
+   *   fromBlock: 1000000,
+   *   toBlock: 1000100
+   * });
+   * ```
    */
   public readonly logs: LogsModule;
+
   /**
-   * Proxy module instance
+   * Proxy module instance for accessing proxy-related endpoints
    * @readonly
    * @example
+   * ```ts
    * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
-   * sdk.proxy.getProxyAddress('0x1234567890123456789012345678901234567890');
+   * // Get block by number
+   * const block = await sdk.proxy.getBlockByNumber('0x123abc');
+   * // Get transaction by hash
+   * const tx = await sdk.proxy.getTransactionByHash('0x123...abc');
+   * ```
    */
   public readonly proxy: ProxyModule;
+
   /**
-   * Tokens module instance
+   * Tokens module instance for accessing token-related endpoints
    * @readonly
    * @example
+   * ```ts
    * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
-   * sdk.tokens.getTokenSupply('0x1234567890123456789012345678901234567890');
+   * // Get token balance
+   * const balance = await sdk.tokens.getTokenBalance({
+   *   contractAddress: '0x123...abc',
+   *   address: '0x456...def'
+   * });
+   * // Get token supply
+   * const supply = await sdk.tokens.getTokenSupply({
+   *   contractAddress: '0x123...abc'
+   * });
+   * ```
    */
   public readonly tokens: TokensModule;
+
   /**
-   * Gas module instance
+   * Gas module instance for accessing gas-related endpoints
    * @readonly
    * @example
+   * ```ts
    * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
-   * sdk.gas.getGasPrice();
+   * // Get gas price
+   * const gasPrice = await sdk.gas.getGasPrice();
+   * // Get gas oracle
+   * const gasOracle = await sdk.gas.getGasOracle();
+   * ```
    */
   public readonly gas: GasModule;
+
   /**
-   * Stats module instance
+   * Stats module instance for accessing statistics-related endpoints
    * @readonly
    * @example
+   * ```ts
    * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
-   * sdk.stats.getStats();
+   * // Get ETH price
+   * const ethPrice = await sdk.stats.getEthPrice();
+   * // Get ETH supply
+   * const ethSupply = await sdk.stats.getEthSupply();
+   * ```
    */
   public readonly stats: StatsModule;
 
   /**
-   * API error class
+   * API error class for handling API-related errors
    * @static
    * @type {EtherscanAPIError}
    * @readonly
    * @example
-   * if (error instanceof EtherscanSDK.APIError) {
-   *   console.error('API error:', error.message);
+   * ```ts
+   * try {
+   *   await sdk.accounts.getBalance({ address: '0x123...abc' });
+   * } catch (error) {
+   *   if (error instanceof EtherscanSDK.APIError) {
+   *     console.error('API error:', error.message);
+   *   }
    * }
+   * ```
    */
   public static readonly APIError = EtherscanAPIError;
+
   /**
-   * Validation error class
+   * Validation error class for handling validation-related errors
    * @static
    * @type {EtherscanValidationError}
    * @readonly
    * @example
-   * if (error instanceof EtherscanSDK.ValidationError) {
-   *   console.error('Validation error:', error.message);
+   * ```ts
+   * try {
+   *   await sdk.accounts.getBalance({ address: 'invalid_address' });
+   * } catch (error) {
+   *   if (error instanceof EtherscanSDK.ValidationError) {
+   *     console.error('Validation error:', error.message);
+   *   }
    * }
+   * ```
    */
   public static readonly ValidationError = EtherscanValidationError;
+
   /**
-   * Network error class
+   * Network error class for handling network-related errors
    * @static
    * @type {EtherscanNetworkError}
    * @readonly
    * @example
-   * if (error instanceof EtherscanSDK.NetworkError) {
-   *   console.error('Network error:', error.message);
+   * ```ts
+   * try {
+   *   await sdk.accounts.getBalance({ address: '0x123...abc' });
+   * } catch (error) {
+   *   if (error instanceof EtherscanSDK.NetworkError) {
+   *     console.error('Network error:', error.message);
+   *   }
    * }
+   * ```
    */
   public static readonly NetworkError = EtherscanNetworkError;
 
   /**
-   * Initialize the SDK
+   * Initialize the SDK with configuration options
    * @param {EtherscanSDKOptions} options - SDK configuration options
    * @throws {EtherscanValidationError} if API key is missing
    * @throws {EtherscanValidationError} if network is invalid
    * @example
-   * const sdk = new EtherscanSDK({ apiKey: 'your_api_key' });
+   * ```ts
+   * const sdk = new EtherscanSDK({
+   *   apiKey: 'your_api_key',
+   *   network: 'mainnet',
+   *   version: 'v2',
+   *   timeout: 5000,
+   *   rateLimitEnabled: true,
+   *   maxRequestsPerSecond: 5
+   * });
+   * ```
    */
   constructor(options: EtherscanSDKOptions) {
     // Validate API key
@@ -207,6 +331,13 @@ export class EtherscanSDK {
    * Resolve the API URL for the given network
    * @param {Network | NetworkString} network - The network to resolve the API URL for
    * @returns {string} The API URL
+   * @private
+   * @example
+   * ```ts
+   * const url = this.resolveAPIURL('mainnet');
+   * // Returns: 'https://api.etherscan.io/api' for v1
+   * // Returns: 'https://api.etherscan.io/api?chainid=1' for v2
+   * ```
    */
   private resolveAPIURL(network: Network | NetworkString): string {
     if (this.version === 'v1') {
@@ -219,17 +350,26 @@ export class EtherscanSDK {
   }
 
   /**
-   * Get the current network
+   * Get the current network configuration
    * @returns {Network | NetworkString} The current network
+   * @example
+   * ```ts
+   * const network = sdk.getNetwork();
+   * console.log(network); // 'mainnet'
+   * ```
    */
   public getNetwork(): Network | NetworkString {
     return this.network;
   }
 
   /**
-   * Set the request timeout
+   * Set the request timeout for all API calls
    * @param {number} timeout - The timeout in milliseconds
    * @throws {EtherscanValidationError} if timeout is not a positive integer
+   * @example
+   * ```ts
+   * sdk.setTimeout(10000); // Set timeout to 10 seconds
+   * ```
    */
   public setTimeout(timeout: number): void {
     if (!Number.isInteger(timeout) || timeout <= 0) {
