@@ -336,7 +336,7 @@ export class EtherscanSDK {
    * ```ts
    * const url = this.resolveAPIURL('mainnet');
    * // Returns: 'https://api.etherscan.io/api' for v1
-   * // Returns: 'https://api.etherscan.io/api?chainid=1' for v2
+   * // Returns: 'https://api.etherscan.io/v2/api?chainid=1' for v2
    * ```
    */
   private resolveAPIURL(network: Network | NetworkString): string {

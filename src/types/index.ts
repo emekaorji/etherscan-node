@@ -12,54 +12,56 @@ import * as StatsModule from './modules/stats';
 // Export namespaces
 export namespace Accounts {
   export type BalanceRequest = AccountsModule.BalanceRequest;
-  export type BalanceResponse = AccountsModule.BalanceResponse;
   export type BalanceMultiRequest = AccountsModule.BalanceMultiRequest;
   export type TransactionsRequest = AccountsModule.TransactionsRequest;
-  export type Transaction = AccountsModule.Transaction;
-  export type TransactionsResponse = AccountsModule.TransactionsResponse;
+  export type TokenTranfersRequest = AccountsModule.TokenTranfersRequest;
   export type InternalTransactionsRequest =
     AccountsModule.InternalTransactionsRequest;
+
+  export type BalanceResponse = AccountsModule.BalanceResponse;
+  export type TransactionsResponse = AccountsModule.TransactionsResponse;
   export type InternalTransactionsResponse =
     AccountsModule.InternalTransactionsResponse;
-  export type InternalTransaction = AccountsModule.InternalTransaction;
-
   export type TokenTransferResponse = AccountsModule.TokenTransferResponse;
-
   export type NFTTransferResponse = AccountsModule.NFTTransferResponse;
-
   export type ERC1155TransferResponse = AccountsModule.ERC1155TransferResponse;
-
   export type MinedBlockResponse = AccountsModule.MinedBlockResponse;
 }
 
 export namespace Contracts {
   export type ABIRequest = ContractsModule.ABIRequest;
-  export type ABIResponse = ContractsModule.ABIResponse;
   export type SourceCodeRequest = ContractsModule.SourceCodeRequest;
+
+  export type ABIResponse = ContractsModule.ABIResponse;
   export type SourceCodeResponse = ContractsModule.SourceCodeResponse;
 }
 
 export namespace Transactions {
   export type StatusRequest = TransactionsModule.StatusRequest;
-  export type StatusResponse = TransactionsModule.StatusResponse;
   export type ReceiptStatusRequest = TransactionsModule.ReceiptStatusRequest;
+
+  export type StatusResponse = TransactionsModule.StatusResponse;
   export type ReceiptStatusResponse = TransactionsModule.ReceiptStatusResponse;
 }
 
 export namespace Blocks {
   export type BlockRewardRequest = BlocksModule.BlockRewardRequest;
-  export type BlockRewardResponse = BlocksModule.BlockRewardResponse;
   export type BlockCountdownRequest = BlocksModule.BlockCountdownRequest;
+
+  export type BlockRewardResponse = BlocksModule.BlockRewardResponse;
   export type BlockCountdownResponse = BlocksModule.BlockCountdownResponse;
 }
 
 export namespace Logs {
   export type LogsRequest = LogsModule.LogsRequest;
-  export type Log = LogsModule.Log;
+
   export type LogsResponse = LogsModule.LogsResponse;
 }
 
 export namespace Proxy {
+  export type CallRequest = ProxyModule.CallRequest;
+  export type LogRequest = ProxyModule.LogRequest;
+
   export type BlockResponse = ProxyModule.BlockResponse;
   export type TransactionResponse = ProxyModule.TransactionResponse;
   export type TransactionReceiptResponse =
@@ -67,16 +69,14 @@ export namespace Proxy {
   export type LogResponse = ProxyModule.LogResponse;
   export type SyncingStatusResponse = ProxyModule.SyncingStatusResponse;
   export type WorkResponse = ProxyModule.WorkResponse;
-  export type CallRequest = ProxyModule.CallRequest;
-  export type LogRequest = ProxyModule.LogRequest;
 }
 
 export namespace Tokens {
   export type TokenBalanceRequest = TokensModule.TokenBalanceRequest;
-  export type TokenBalanceResponse = TokensModule.TokenBalanceResponse;
   export type TokenSupplyRequest = TokensModule.TokenSupplyRequest;
-  export type TokenSupplyResponse = TokensModule.TokenSupplyResponse;
 
+  export type TokenBalanceResponse = TokensModule.TokenBalanceResponse;
+  export type TokenSupplyResponse = TokensModule.TokenSupplyResponse;
   export type TokenHolderResponse = TokensModule.TokenHolderResponse;
   export type TokenInfoResponse = TokensModule.TokenInfoResponse;
 }

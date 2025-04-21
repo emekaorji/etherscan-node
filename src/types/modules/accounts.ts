@@ -25,6 +25,13 @@ export interface TransactionsRequest
   address: string;
 }
 
+export interface TokenTranfersRequest
+  extends PaginatedRequest,
+    BlockRangeRequest {
+  address: string;
+  contractAddress: string;
+}
+
 export interface Transaction {
   blockNumber: string;
   timeStamp: string;

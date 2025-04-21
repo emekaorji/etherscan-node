@@ -36,6 +36,7 @@
   "homepage": "https://github.com/yourusername/etherscan-sdk#readme",
   "devDependencies": {
     "@types/node": "^22.13.14",
+    "dotenv": "^16.5.0",
     "rimraf": "^3.0.2",
     "typescript": "^5.8.2"
   },

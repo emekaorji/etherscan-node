@@ -5,6 +5,7 @@
 
 import { BaseModule } from './base';
 import { Accounts, APIResponse } from '../types';
+import { AtLeastOne } from '../types/utils';
 
 /**
  * Accounts module for the Etherscan API
@@ -314,11 +315,14 @@ export class AccountsModule extends BaseModule {
    * ```
    */
   public async getTokenTransfers(
-    params: Accounts.TransactionsRequest & { contractAddress?: string }
+    params: AtLeastOne<
+      Accounts.TokenTranfersRequest,
+      'address' | 'contractAddress'
+    >
   ): Promise<Array<Accounts.TokenTransferResponse>> {
     // Validate required parameters
-    this.validateRequired(params, ['address']);
-    this.validateAddress(params.address);
+    this.validateRequiredOr(params, ['address', 'contractAddress']);
+    this.validateAddressOr([params.address, params.contractAddress]);
 
     // Validate contract address if provided
     if (params.contractAddress) {
@@ -378,11 +382,14 @@ export class AccountsModule extends BaseModule {
    * ```
    */
   public async getNFTTransfers(
-    params: Accounts.TransactionsRequest & { contractAddress?: string }
+    params: AtLeastOne<
+      Accounts.TokenTranfersRequest,
+      'address' | 'contractAddress'
+    >
   ): Promise<Array<Accounts.NFTTransferResponse>> {
     // Validate required parameters
     this.validateRequired(params, ['address']);
-    this.validateAddress(params.address);
+    this.validateAddressOr([params.address, params.contractAddress]);
 
     // Validate contract address if provided
     if (params.contractAddress) {

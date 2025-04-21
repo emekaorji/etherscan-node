@@ -57,6 +57,30 @@ export abstract class BaseModule {
   }
 
   /**
+   * Validate that at least one of the required parameters exists
+   */
+  protected validateRequiredOr(
+    params: Record<string, any>,
+    requiredParams: string[]
+  ): void {
+    const hasAtLeastOne = requiredParams.some((param) => {
+      return (
+        params[param] !== undefined &&
+        params[param] !== null &&
+        params[param] !== ''
+      );
+    });
+
+    if (!hasAtLeastOne) {
+      throw new EtherscanValidationError(
+        `At least one of the following parameters is required: ${requiredParams.join(
+          ', '
+        )}`
+      );
+    }
+  }
+
+  /**
    * Validate address format (basic check)
    */
   protected validateAddress(address: string): boolean {
@@ -68,6 +92,23 @@ export abstract class BaseModule {
       );
     }
     return true;
+  }
+
+  /**
+   * Validate addresses format (basic check), skipping empty addresses in the array
+   */
+  protected validateAddressOr(addresses: (string | undefined)[]) {
+    for (const address of addresses) {
+      if (address) {
+        // Basic Ethereum address validation (0x followed by 40 hex characters)
+        const addressRegex = /^0x[a-fA-F0-9]{40}$/;
+        if (!addressRegex.test(address)) {
+          throw new EtherscanValidationError(
+            `Invalid Ethereum address format: ${address}`
+          );
+        }
+      }
+    }
   }
 
   /**
