@@ -41,7 +41,29 @@ export class StatsModule extends BaseModule {
   }
 
   /**
-   * Get the total Ether supply
+   * Get the total amount of Ether in circulation, excluding ETH2 Staking
+   * rewards and EIP1559 burnt fees
+   *
+   * @returns {Promise<Stats.EthSupplyResponse>} Total ETH supply information
+   * @example
+   * ```ts
+   * const supply = await statsModule.getEthSupply();
+   * console.log(supply.ethsupply); // '120000000000000000000000000'
+   * ```
+   */
+  public async getBasicEthSupply(): Promise<Stats.EthSupplyResponse> {
+    const apiParams = this.createParams('stats', 'ethsupply', {});
+
+    const response = await this.httpClient.get<
+      APIResponse<Stats.EthSupplyResponse>
+    >('', apiParams);
+    return response.result;
+  }
+
+  /**
+   * Get the total amount of Ether in circulation, including ETH2 Staking
+   * rewards, EIP1559 burnt fees, and total withdrawn ETH from the beacon chain
+   *
    * @returns {Promise<Stats.EthSupplyResponse>} Total ETH supply information
    * @example
    * ```ts
@@ -100,15 +122,13 @@ export class StatsModule extends BaseModule {
    * console.log(nodeSize.clientType); // 'geth'
    * ```
    */
-  public async getNodeSize(
-    params: {
-      startDate?: string;
-      endDate?: string;
-      clientType?: string;
-      syncMode?: string;
-      sort?: 'asc' | 'desc';
-    } = {}
-  ): Promise<Stats.EthNodeSizeResponse> {
+  public async getNodeSize(params: {
+    startDate: string;
+    endDate: string;
+    clientType?: 'geth' | 'parity';
+    syncMode?: 'default' | 'archive';
+    sort?: 'asc' | 'desc';
+  }): Promise<Stats.EthNodeSizeResponse> {
     // Validate date format if provided
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (params.startDate && !dateRegex.test(params.startDate)) {
@@ -142,10 +162,22 @@ export class StatsModule extends BaseModule {
    * console.log(fees[0].transactionFee_ETH); // '123.456'
    * ```
    */
-  public async getDailyNetworkFee(): Promise<
-    Array<{ UTCDate: string; transactionFee_ETH: string }>
-  > {
-    const apiParams = this.createParams('stats', 'dailytxnfee', {});
+  public async getDailyNetworkTransactionFee(
+    startDate: string,
+    endDate: string,
+    sort: 'asc' | 'desc' = 'asc'
+  ): Promise<Array<{ UTCDate: string; transactionFee_ETH: string }>> {
+    // Validate date format
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+      throw new Error('Dates must be in YYYY-MM-DD format');
+    }
+
+    const apiParams = this.createParams('stats', 'dailytxnfee', {
+      startdate: startDate,
+      enddate: endDate,
+      sort,
+    });
 
     const response = await this.httpClient.get<
       APIResponse<Array<{ UTCDate: string; transactionFee_ETH: string }>>
@@ -163,10 +195,22 @@ export class StatsModule extends BaseModule {
    * console.log(newAddresses[0].newAddressCount); // 12345
    * ```
    */
-  public async getDailyNewAddressCount(): Promise<
-    Array<{ UTCDate: string; newAddressCount: number }>
-  > {
-    const apiParams = this.createParams('stats', 'dailynewaddress', {});
+  public async getDailyNewAddressCount(
+    startDate: string,
+    endDate: string,
+    sort: 'asc' | 'desc' = 'asc'
+  ): Promise<Array<{ UTCDate: string; newAddressCount: number }>> {
+    // Validate date format
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+      throw new Error('Dates must be in YYYY-MM-DD format');
+    }
+
+    const apiParams = this.createParams('stats', 'dailynewaddress', {
+      startdate: startDate,
+      enddate: endDate,
+      sort,
+    });
 
     const response = await this.httpClient.get<
       APIResponse<Array<{ UTCDate: string; newAddressCount: number }>>
@@ -233,7 +277,7 @@ export class StatsModule extends BaseModule {
    * console.log(blockSizes[0].avgBlockSize); // 12345
    * ```
    */
-  public async getDailyBlockSize(
+  public async getDailyAverageBlockSize(
     startDate: string,
     endDate: string,
     sort: 'asc' | 'desc' = 'asc'
@@ -326,7 +370,7 @@ export class StatsModule extends BaseModule {
       throw new Error('Dates must be in YYYY-MM-DD format');
     }
 
-    const apiParams = this.createParams('stats', 'dailyuncleblocks', {
+    const apiParams = this.createParams('stats', 'dailyuncleblkcount', {
       startdate: startDate,
       enddate: endDate,
       sort,

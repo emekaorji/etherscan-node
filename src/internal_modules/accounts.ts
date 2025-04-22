@@ -315,10 +315,7 @@ export class AccountsModule extends BaseModule {
    * ```
    */
   public async getTokenTransfers(
-    params: AtLeastOne<
-      Accounts.TokenTranfersRequest,
-      'address' | 'contractAddress'
-    >
+    params: Accounts.TokenTranfersRequest
   ): Promise<Array<Accounts.TokenTransferResponse>> {
     // Validate required parameters
     this.validateRequiredOr(params, ['address', 'contractAddress']);
@@ -382,10 +379,7 @@ export class AccountsModule extends BaseModule {
    * ```
    */
   public async getNFTTransfers(
-    params: AtLeastOne<
-      Accounts.TokenTranfersRequest,
-      'address' | 'contractAddress'
-    >
+    params: Accounts.TokenTranfersRequest
   ): Promise<Array<Accounts.NFTTransferResponse>> {
     // Validate required parameters
     this.validateRequired(params, ['address']);

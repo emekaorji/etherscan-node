@@ -142,6 +142,7 @@ export class ContractsModule extends BaseModule {
     contractName: string;
     compilerVersion: string;
     optimizationUsed: boolean;
+    codeformat?: 'solidity-single-file' | 'solidity-standard-json-input';
     runs?: number;
     constructorArguments?: string;
     evmVersion?: string;
@@ -170,7 +171,7 @@ export class ContractsModule extends BaseModule {
       licenseType: params.licenseType,
     });
 
-    const response = await this.httpClient.get<APIResponse<string>>(
+    const response = await this.httpClient.post<APIResponse<string>>(
       '',
       apiParams
     );

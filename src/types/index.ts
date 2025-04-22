@@ -8,13 +8,17 @@ import * as ProxyModule from './modules/proxy';
 import * as TokensModule from './modules/tokens';
 import * as GasModule from './modules/gas';
 import * as StatsModule from './modules/stats';
+import { AtLeastOne } from './utils';
 
 // Export namespaces
 export namespace Accounts {
   export type BalanceRequest = AccountsModule.BalanceRequest;
   export type BalanceMultiRequest = AccountsModule.BalanceMultiRequest;
   export type TransactionsRequest = AccountsModule.TransactionsRequest;
-  export type TokenTranfersRequest = AccountsModule.TokenTranfersRequest;
+  export type TokenTranfersRequest = AtLeastOne<
+    AccountsModule.TokenTranfersRequest,
+    'address' | 'contractAddress'
+  >;
   export type InternalTransactionsRequest =
     AccountsModule.InternalTransactionsRequest;
 
@@ -53,7 +57,10 @@ export namespace Blocks {
 }
 
 export namespace Logs {
-  export type LogsRequest = LogsModule.LogsRequest;
+  export type LogsRequest = AtLeastOne<
+    LogsModule.LogsRequest,
+    'address' | 'startBlock'
+  >;
 
   export type LogsResponse = LogsModule.LogsResponse;
 }

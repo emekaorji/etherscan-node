@@ -57,7 +57,7 @@ export class ProxyModule extends BaseModule {
 
   /**
    * Get information about a block by block number
-   * @param {string} blockNumber - Block number in hex format or 'latest', 'earliest', 'pending'
+   * @param {string} blockNumber - Block number in hex format or `'latest'`, `'earliest'`, `'pending'`
    * @returns {Promise<Proxy.Block>} Block information
    * @throws {EtherscanValidationError} if block number is invalid
    * @example

@@ -91,36 +91,6 @@ export class TokensModule extends BaseModule {
   }
 
   /**
-   * Get ERC20 token circulation supply for token contract address
-   * @param {string} contractAddress - ERC20 token contract address
-   * @returns {Promise<string>} Circulating token supply in base units (wei)
-   * @throws {EtherscanValidationError} if contract address is invalid
-   * @example
-   * ```ts
-   * const circulation = await tokensModule.getTokenCirculationSupply(
-   *   '0x123...abc'
-   * );
-   * console.log(circulation); // '800000000000000000000' (800 tokens with 18 decimals)
-   * ```
-   */
-  public async getTokenCirculationSupply(
-    contractAddress: string
-  ): Promise<string> {
-    // Validate parameters
-    this.validateAddress(contractAddress);
-
-    const apiParams = this.createParams('stats', 'tokenCsupply', {
-      contractaddress: contractAddress,
-    });
-
-    const response = await this.httpClient.get<APIResponse<string>>(
-      '',
-      apiParams
-    );
-    return response.result;
-  }
-
-  /**
    * Get ERC20 token holder list for token contract address
    * @param {string} contractAddress - ERC20 token contract address
    * @param {number} [page=1] - Page number for pagination
@@ -155,6 +125,32 @@ export class TokensModule extends BaseModule {
     const response = await this.httpClient.get<
       APIResponse<Tokens.TokenHolderResponse[]>
     >('', apiParams);
+    return response.result;
+  }
+
+  /**
+   * Get total number of token holders for ERC20 token contract address
+   * @param {string} contractAddress - ERC20 token contract address
+   * @returns {Promise<number>} List of token holders with their balances
+   * @throws {EtherscanValidationError} if contract address is invalid
+   * @example
+   * ```ts
+   * const holders = await tokensModule.getTokenHolders('0x123...abc');
+   * console.log(holders); // 12345
+   * ```
+   */
+  public async getTokenHoldersCount(contractAddress: string): Promise<number> {
+    // Validate parameters
+    this.validateAddress(contractAddress);
+
+    const apiParams = this.createParams('token', 'tokenholdercount', {
+      contractaddress: contractAddress,
+    });
+
+    const response = await this.httpClient.get<APIResponse<number>>(
+      '',
+      apiParams
+    );
     return response.result;
   }
 

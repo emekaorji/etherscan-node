@@ -14,15 +14,15 @@ import {
   NetworkString,
 } from './types';
 import { HttpClient } from './utils/http-client';
-import { AccountsModule } from './modules/accounts';
-import { ContractsModule } from './modules/contracts';
-import { TransactionsModule } from './modules/transactions';
-import { BlocksModule } from './modules/blocks';
-import { LogsModule } from './modules/logs';
-import { ProxyModule } from './modules/proxy';
-import { TokensModule } from './modules/tokens';
-import { GasModule } from './modules/gas';
-import { StatsModule } from './modules/stats';
+import { AccountsModule } from './internal_modules/accounts';
+import { ContractsModule } from './internal_modules/contracts';
+import { TransactionsModule } from './internal_modules/transactions';
+import { BlocksModule } from './internal_modules/blocks';
+import { LogsModule } from './internal_modules/logs';
+import { ProxyModule } from './internal_modules/proxy';
+import { TokensModule } from './internal_modules/tokens';
+import { GasModule } from './internal_modules/gas';
+import { StatsModule } from './internal_modules/stats';
 import {
   DEFAULT_TIMEOUT,
   DEFAULT_MAX_REQUESTS_PER_SECOND,

@@ -2,11 +2,11 @@
  * Logs module types
  */
 
-import { BlockRangeRequest } from '../index';
+import { BlockRangeRequest, PaginatedRequest } from '../index';
 
 export type TopicOperator = 'and' | 'or';
 
-export interface LogsRequest extends BlockRangeRequest {
+export interface LogsRequest extends PaginatedRequest, BlockRangeRequest {
   address: string;
   topics?: string[];
   topic0_1_opr?: TopicOperator;

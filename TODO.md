@@ -1,0 +1,4 @@
+- Rewrite the JSDoc with the exact descriptions of modules, actions, and parameters from the etherscan docs https://docs.etherscan.io/etherscan-v2/api-endpoints.
+- Add more methods to the Blocks module.
+- Add the "Nametags" module.
+- Add more examples to the `proxy` playground.
