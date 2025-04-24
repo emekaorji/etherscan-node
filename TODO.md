@@ -2,3 +2,4 @@
 - Add more methods to the Blocks module.
 - Add the "Nametags" module.
 - Add more examples to the `proxy` playground.
+- Add individual modules as standalone classes.

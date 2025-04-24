@@ -1,6 +1,6 @@
 {
   "name": "etherscan-sdk",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A comprehensive TypeScript SDK for Etherscan API that works in both Node.js and browser environments",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
