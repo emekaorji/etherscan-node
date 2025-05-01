@@ -5,7 +5,6 @@
 
 import { BaseModule } from './base';
 import { Accounts, APIResponse } from '../types';
-import { AtLeastOne } from '../types/utils';
 
 /**
  * Accounts module for the Etherscan API
@@ -19,7 +18,7 @@ import { AtLeastOne } from '../types/utils';
  * const accounts = sdk.accounts;
  * ```
  */
-export class AccountsModule extends BaseModule {
+export class _AccountsModule extends BaseModule {
   /**
    * Get Ether balance for a single address
    * @param {Object} params - Balance request parameters
@@ -259,26 +258,24 @@ export class AccountsModule extends BaseModule {
    * ```
    */
   public async getInternalTransactionsByBlockRange(
-    startBlock: number,
-    endBlock: number,
-    page: number = 1,
-    offset: number = 10,
-    sort: 'asc' | 'desc' = 'asc'
+    params: Accounts.InternalTransactionsByBlockRangeRequest
   ): Promise<Accounts.InternalTransactionsResponse> {
-    // Validate block numbers
-    this.validateBlockNumber(startBlock);
-    this.validateBlockNumber(endBlock);
+    this.validateRequired(params, ['startBlock', 'endBlock']);
 
-    if (startBlock > endBlock) {
+    // Validate block numbers
+    this.validateBlockNumber(params.startBlock);
+    this.validateBlockNumber(params.endBlock);
+
+    if (params.startBlock > params.endBlock) {
       throw new Error('Start block must be less than or equal to end block');
     }
 
     const apiParams = this.createParams('account', 'txlistinternal', {
-      startblock: startBlock,
-      endblock: endBlock,
-      page,
-      offset,
-      sort,
+      startblock: params.startBlock,
+      endblock: params.endBlock,
+      page: params.page,
+      offset: params.offset,
+      sort: params.sort,
     });
 
     const response = await this.httpClient.get<
@@ -444,11 +441,11 @@ export class AccountsModule extends BaseModule {
    * ```
    */
   public async getERC1155Transfers(
-    params: Accounts.TransactionsRequest & { contractAddress?: string }
+    params: Accounts.TokenTranfersRequest
   ): Promise<Array<Accounts.ERC1155TransferResponse>> {
     // Validate required parameters
     this.validateRequired(params, ['address']);
-    this.validateAddress(params.address);
+    this.validateAddressOr([params.address, params.contractAddress]);
 
     // Validate contract address if provided
     if (params.contractAddress) {
@@ -500,17 +497,16 @@ export class AccountsModule extends BaseModule {
    * ```
    */
   public async getMinedBlocks(
-    address: string,
-    page: number = 1,
-    offset: number = 10
+    params: Accounts.MinedBlockRequest
   ): Promise<Array<Accounts.MinedBlockResponse>> {
     // Validate address
-    this.validateAddress(address);
+    this.validateAddress(params.address);
 
     const apiParams = this.createParams('account', 'getminedblocks', {
-      address,
-      page,
-      offset,
+      address: params.address,
+      page: params.page,
+      offset: params.offset,
+      blocktype: params.blocktype,
     });
 
     const response = await this.httpClient.get<

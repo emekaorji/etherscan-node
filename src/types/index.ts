@@ -1,13 +1,13 @@
 // Import all module types
-import * as AccountsModule from './modules/accounts';
-import * as ContractsModule from './modules/contracts';
-import * as TransactionsModule from './modules/transactions';
-import * as BlocksModule from './modules/blocks';
-import * as LogsModule from './modules/logs';
-import * as ProxyModule from './modules/proxy';
-import * as TokensModule from './modules/tokens';
-import * as GasModule from './modules/gas';
-import * as StatsModule from './modules/stats';
+import * as AccountsModule from './_modules/accounts';
+import * as ContractsModule from './_modules/contracts';
+import * as TransactionsModule from './_modules/transactions';
+import * as BlocksModule from './_modules/blocks';
+import * as LogsModule from './_modules/logs';
+import * as ProxyModule from './_modules/proxy';
+import * as TokensModule from './_modules/tokens';
+import * as GasModule from './_modules/gas';
+import * as StatsModule from './_modules/stats';
 import { AtLeastOne } from './utils';
 
 // Export namespaces
@@ -15,12 +15,15 @@ export namespace Accounts {
   export type BalanceRequest = AccountsModule.BalanceRequest;
   export type BalanceMultiRequest = AccountsModule.BalanceMultiRequest;
   export type TransactionsRequest = AccountsModule.TransactionsRequest;
+  export type InternalTransactionsRequest =
+    AccountsModule.InternalTransactionsRequest;
+  export type InternalTransactionsByBlockRangeRequest =
+    AccountsModule.InternalTransactionsByBlockRangeRequest;
   export type TokenTranfersRequest = AtLeastOne<
     AccountsModule.TokenTranfersRequest,
     'address' | 'contractAddress'
   >;
-  export type InternalTransactionsRequest =
-    AccountsModule.InternalTransactionsRequest;
+  export type MinedBlockRequest = AccountsModule.MinedBlockRequest;
 
   export type BalanceResponse = AccountsModule.BalanceResponse;
   export type TransactionsResponse = AccountsModule.TransactionsResponse;
@@ -99,15 +102,15 @@ export namespace Stats {
   export type EthNodeSizeResponse = StatsModule.EthNodeSizeResponse;
 }
 
-export * from './modules/accounts';
-export * from './modules/contracts';
-export * from './modules/transactions';
-export * from './modules/blocks';
-export * from './modules/logs';
-export * from './modules/proxy';
-export * from './modules/tokens';
-export * from './modules/gas';
-export * from './modules/stats';
+export * from './_modules/accounts';
+export * from './_modules/contracts';
+export * from './_modules/transactions';
+export * from './_modules/blocks';
+export * from './_modules/logs';
+export * from './_modules/proxy';
+export * from './_modules/tokens';
+export * from './_modules/gas';
+export * from './_modules/stats';
 
 export * from './base';
 export * from './client';

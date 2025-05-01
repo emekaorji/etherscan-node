@@ -1,4 +1,9 @@
 /**
+ * Supported SDK versions
+ */
+export type Version = 'v1' | 'v2';
+
+/**
  * SDK Configuration options
  */
 export interface EtherscanSDKOptions {
@@ -15,11 +20,6 @@ export interface EtherscanSDKOptions {
   /** Maximum number of requests per second (defaults to 5) */
   maxRequestsPerSecond?: number;
 }
-
-/**
- * Supported SDK versions
- */
-export type Version = 'v1' | 'v2';
 
 /**
  * Supported Ethereum networks

@@ -5,6 +5,7 @@
 
 import { HttpClient } from '../utils/http-client';
 import { EtherscanValidationError } from '../types';
+import { cleanObject } from '../utils/cleanObject';
 
 /**
  * Base module class for all API modules
@@ -28,12 +29,12 @@ export abstract class BaseModule {
     action: string,
     params: Record<string, any> = {}
   ): Record<string, any> {
-    return {
+    return cleanObject({
       module,
       action,
       apikey: this.apiKey,
       ...params,
-    };
+    });
   }
 
   /**

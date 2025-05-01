@@ -6,33 +6,20 @@
 
 import {
   EtherscanSDKOptions,
-  Network,
   EtherscanAPIError,
   EtherscanValidationError,
   EtherscanNetworkError,
-  Version,
-  NetworkString,
 } from './types';
-import { HttpClient } from './utils/http-client';
-import { AccountsModule } from './internal_modules/accounts';
-import { ContractsModule } from './internal_modules/contracts';
-import { TransactionsModule } from './internal_modules/transactions';
-import { BlocksModule } from './internal_modules/blocks';
-import { LogsModule } from './internal_modules/logs';
-import { ProxyModule } from './internal_modules/proxy';
-import { TokensModule } from './internal_modules/tokens';
-import { GasModule } from './internal_modules/gas';
-import { StatsModule } from './internal_modules/stats';
-import {
-  DEFAULT_TIMEOUT,
-  DEFAULT_MAX_REQUESTS_PER_SECOND,
-  DEFAULT_NETWORK,
-  ERROR_MESSAGES,
-  V1_API_URLS,
-  V2_API_URL,
-  V2_API_CHAIN_IDS,
-  SUPPORTED_CHAINS,
-} from './constants';
+import { _AccountsModule } from './_modules/accounts';
+import { ContractsModule } from './_modules/contracts';
+import { TransactionsModule } from './_modules/transactions';
+import { BlocksModule } from './_modules/blocks';
+import { LogsModule } from './_modules/logs';
+import { ProxyModule } from './_modules/proxy';
+import { TokensModule } from './_modules/tokens';
+import { GasModule } from './_modules/gas';
+import { StatsModule } from './_modules/stats';
+import { EtherscanSDKBase } from './baseClient';
 
 /**
  * Main Etherscan SDK class that provides access to all Etherscan API endpoints
@@ -55,16 +42,7 @@ import {
  * });
  * ```
  */
-export class EtherscanSDK {
-  /** API key for Etherscan */
-  private readonly apiKey: string;
-  /** Network to use (e.g., 'mainnet', 'testnet', etc.) */
-  private readonly network: Network | NetworkString;
-  /** API version to use ('v1' or 'v2') */
-  private readonly version: Version;
-  /** HTTP client for making API requests */
-  private httpClient: HttpClient;
-
+export class EtherscanSDK extends EtherscanSDKBase {
   /**
    * Account module instance for accessing account-related endpoints
    * @readonly
@@ -81,7 +59,7 @@ export class EtherscanSDK {
    * });
    * ```
    */
-  public readonly accounts: AccountsModule;
+  public readonly accounts: _AccountsModule;
 
   /**
    * Contracts module instance for accessing contract-related endpoints
@@ -286,37 +264,10 @@ export class EtherscanSDK {
    * ```
    */
   constructor(options: EtherscanSDKOptions) {
-    // Validate API key
-    if (!options.apiKey) {
-      throw new EtherscanValidationError(ERROR_MESSAGES.MISSING_API_KEY);
-    }
-
-    this.apiKey = options.apiKey;
-    this.network = options.network || DEFAULT_NETWORK;
-
-    // Validate network
-    if (!SUPPORTED_CHAINS.includes(this.network)) {
-      throw new EtherscanValidationError(ERROR_MESSAGES.INVALID_NETWORK);
-    }
-
-    this.version = options.version || 'v2';
-
-    // Initialize HTTP client
-    this.httpClient = new HttpClient({
-      baseUrl: this.resolveAPIURL(this.network),
-      timeout: options.timeout || DEFAULT_TIMEOUT,
-    });
-
-    // Configure rate limiting
-    if (options.rateLimitEnabled !== undefined) {
-      this.httpClient.setRateLimit(
-        options.rateLimitEnabled,
-        options.maxRequestsPerSecond || DEFAULT_MAX_REQUESTS_PER_SECOND
-      );
-    }
+    super(options);
 
     // Initialize modules
-    this.accounts = new AccountsModule(this.httpClient, this.apiKey);
+    this.accounts = new _AccountsModule(this.httpClient, this.apiKey);
     this.contracts = new ContractsModule(this.httpClient, this.apiKey);
     this.transactions = new TransactionsModule(this.httpClient, this.apiKey);
     this.blocks = new BlocksModule(this.httpClient, this.apiKey);
@@ -325,60 +276,5 @@ export class EtherscanSDK {
     this.tokens = new TokensModule(this.httpClient, this.apiKey);
     this.gas = new GasModule(this.httpClient, this.apiKey);
     this.stats = new StatsModule(this.httpClient, this.apiKey);
-  }
-
-  /**
-   * Resolve the API URL for the given network
-   * @param {Network | NetworkString} network - The network to resolve the API URL for
-   * @returns {string} The API URL
-   * @private
-   * @example
-   * ```ts
-   * const url = this.resolveAPIURL('mainnet');
-   * // Returns: 'https://api.etherscan.io/api' for v1
-   * // Returns: 'https://api.etherscan.io/v2/api?chainid=1' for v2
-   * ```
-   */
-  private resolveAPIURL(network: Network | NetworkString): string {
-    if (this.version === 'v1') {
-      return V1_API_URLS[network];
-    }
-
-    const chainId = V2_API_CHAIN_IDS[network];
-
-    return `${V2_API_URL}?chainid=${chainId}`;
-  }
-
-  /**
-   * Get the current network configuration
-   * @returns {Network | NetworkString} The current network
-   * @example
-   * ```ts
-   * const network = sdk.getNetwork();
-   * console.log(network); // 'mainnet'
-   * ```
-   */
-  public getNetwork(): Network | NetworkString {
-    return this.network;
-  }
-
-  /**
-   * Set the request timeout for all API calls
-   * @param {number} timeout - The timeout in milliseconds
-   * @throws {EtherscanValidationError} if timeout is not a positive integer
-   * @example
-   * ```ts
-   * sdk.setTimeout(10000); // Set timeout to 10 seconds
-   * ```
-   */
-  public setTimeout(timeout: number): void {
-    if (!Number.isInteger(timeout) || timeout <= 0) {
-      throw new EtherscanValidationError('Timeout must be a positive integer');
-    }
-
-    this.httpClient = new HttpClient({
-      baseUrl: this.resolveAPIURL(this.network),
-      timeout,
-    });
   }
 }
